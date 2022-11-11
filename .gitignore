@@ -1,3 +1,13 @@
+# Added by user
+.DS_Store
+.vscode
+.atom
+.idea
+*.sublime-project
+*.sublime-workspace
+# dont-cancel-me-please (non-distributable contents for local testing)
+dmca/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
