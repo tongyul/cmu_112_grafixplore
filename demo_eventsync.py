@@ -31,11 +31,11 @@ def mousePressed(app, event):
 def mouseReleased(app, event):
     print("mouseReleased", app, event)
     print("event internals:", exposed_entries(event.__dict__))
-@ESync.mouse
+# @ESync.mouse  # unregistered for demonstration; should respond immediately
 def mouseMoved(app, event):
     print("mouseMoved", app, event)
     print("event internals:", exposed_entries(event.__dict__))
-@ESync.mouse
+@ESync.mouse  # registered, should respond with each call to timerFired
 def mouseDragged(app, event):
     print("mouseDragged", app, event)
     print("event internals:", exposed_entries(event.__dict__))
@@ -50,8 +50,8 @@ def sizeChanged(app):
 def main() -> None:
     app = TopLevelApp(autorun=False)
     # framerate hack!
-    app.timerDelay = 8  # set to 120 FPS cap; the faster the better
-    # app.timerDelay = 500  # set to 2 FPS cap; to show delayed event processing
+    # app.timerDelay = 8  # set to 120 FPS cap; the faster the better
+    app.timerDelay = 500  # set to 2 FPS cap; to show delayed event processing
     app.run()
 
 if __name__ == '__main__':

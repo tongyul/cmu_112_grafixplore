@@ -2,6 +2,7 @@ from __future__ import annotations
 import dataclasses
 from cmu_112_graphics.cmu_112_graphics import App
 from functools import lru_cache, wraps
+from threading import Lock
 from typing import Any, Protocol, final
 
 
@@ -93,12 +94,6 @@ class _ESSingularListener:
         self.store(dispatcher)
 
 
-class _ESReregisterError(Exception):
-    def __init__(self, call) -> None:
-        super().__init__(f"{call} is repeatedly registered")
-        self.call = call
-
-
 @lru_cache(1)  # is singleton (takes no arguments, so fine)
 @final         # cannot be subclassed
 class _EventSyncronizer:
@@ -143,28 +138,37 @@ class _EventSyncronizer:
     '''
 
     container: list[_ESDispatcherLike]
+    containerlock: Lock
 
     def __init__(self) -> None:
         self.container = []
+        self.containerlock = Lock()
 
     def _dispatch(self) -> None:
+        self.containerlock.acquire()
         container = self.container.copy()  # shallow
         self.container.clear()
+        self.containerlock.release()
         for d in container: d()
+
+    def _store(self, esdl: _ESDispatcherLike) -> None:
+        self.containerlock.acquire()
+        self.container.append(esdl)
+        self.containerlock.release()
 
     def mouse(self, call: MouseListenerLike) -> _ESMouseListener:
         '''
         Wrap a mouse event listener, to eliminate race conditions while
         leveraging the listener paradigm.
         '''
-        return _ESMouseListener(call, self.container.append)
+        return _ESMouseListener(call, self._store)
 
     def key(self, call: KeyListenerLike) -> _ESKeyListener:
         '''
         Wrap a key event listener, to eliminate race conditions while leveraging
         the listener paradigm.
         '''
-        return _ESKeyListener(call, self.container.append)
+        return _ESKeyListener(call, self._store)
 
     def singular(self, call: SingularListenerLike) -> _ESSingularListener:
         '''
@@ -175,7 +179,7 @@ class _EventSyncronizer:
         This decorator should NOT be used on `appStarted` or `appStopped`
         because those functions may run without the main loop being active.
         '''
-        return _ESSingularListener(call, self.container.append)
+        return _ESSingularListener(call, self._store)
 
     def hook(self, call):
         '''
