@@ -1,0 +1,22 @@
+{
+  "air": {
+    "blockspec_version": 1,
+    "texture": null,
+    "map_legend": [255, 255, 255]
+  },
+  "dirt": {
+    "blockspec_version": 1,
+    "texture": "dirt-16-1.png",
+    "map_legend": [102, 57, 49]
+  },
+  "grass": {
+    "blockspec_version": 1,
+    "texture": "grass-16-1.png",
+    "map_legend": [106, 190, 48]
+  },
+  "snow": {
+    "blockspec_version": 1,
+    "texture": "snow-16-1.png",
+    "map_legend": [203, 219, 252]
+  }
+}

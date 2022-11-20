@@ -8,6 +8,8 @@
 # dont-cancel-me-please (non-distributable contents for local testing)
 dmca/*
 cmu_112_graphics/cmu_112_graphics.py
+# my scratchpad(s) is(are) private
+scratchpad*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
